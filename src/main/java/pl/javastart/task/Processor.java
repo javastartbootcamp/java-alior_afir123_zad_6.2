@@ -1,30 +1,45 @@
 package pl.javastart.task;
 
-public class Processor extends Component {
+public class Processor extends Component implements Overclockable {
     int timing;
-    double cpuTemperature = 40;
-    static final int MAX_SAFE_TEMPERATURE = 60;
+    double currentTemperature;
     static final int INCRESE_TEMPERATURE = 10;
     static final int INCRESE_TIMING = 100;
+    static final int MAX_SAFE_TEMPERATURE = 60;
 
-    //Temperatura procesora wzrasta o 10 stopni ze wzrostem taktowania o każde 100MHz,
+    public void setTiming(int timing) {
+        while (timing - this.timing >= INCRESE_TIMING) {
+            int i = this.timing + INCRESE_TIMING;
+            currentTemperature = currentTemperature + INCRESE_TEMPERATURE;
+            overclock(currentTemperature, i);
+        }
+        this.timing = timing;
+    }
 
-    public Processor(String modelName, String producer, String serialNumber, int timing, double cpuTemperature) {
+    @Override
+    public void overclock(double currentTemperature, int timing) {
+        if (currentTemperature >= MAX_SAFE_TEMPERATURE) {
+            throw new IllegalArgumentException("Maksymalna temperatura została przekroczona ");
+        } else {
+            this.timing = timing;
+        }
+    }
+
+    public Processor(String modelName, String producer, String serialNumber, int timing, double currentTemperature) {
         super(modelName, producer, serialNumber);
         this.timing = timing;
-        this.cpuTemperature = cpuTemperature;
+        overclock(currentTemperature, timing);
+        this.currentTemperature = currentTemperature;
     }
 
     @Override
     public String toString() {
         return "Processor{" +
                 "timing=" + timing +
-                ", cpuTemperature=" + cpuTemperature +
+                ", currentTemperature=" + currentTemperature +
                 ", modelName='" + modelName + '\'' +
                 ", producer='" + producer + '\'' +
                 ", serialNumber='" + serialNumber + '\'' +
                 '}';
     }
 }
-
-

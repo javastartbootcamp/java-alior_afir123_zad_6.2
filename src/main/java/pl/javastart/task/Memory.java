@@ -1,19 +1,18 @@
 package pl.javastart.task;
 
-public class Memory extends Component {
+public class Memory extends Component implements Overclockable {
     int memoryAmount;
     int timing;
     int currentTemperature;
+    static final int INCRESE_TEMPERATURE = 15;
+    static final int INCRESE_TIMING = 100;
     static final int MAX_SAFE_TEMPERATURE = 60;
-    static final int RISE_OF_TEMPERATURE = 10;
-
-    //pamięci ram o 15 stopni na każde 100MHz więcej.
 
     public void setTiming(int timing) {
-        while (timing - this.timing >= 100) {
-            int i = this.timing + 100;
-            currentTemperature = currentTemperature + RISE_OF_TEMPERATURE;
-            checkTemperature(currentTemperature, i);
+        while (timing - this.timing >= INCRESE_TIMING) {
+            int i = this.timing + INCRESE_TIMING;
+            currentTemperature = currentTemperature + INCRESE_TEMPERATURE;
+            overclock(currentTemperature, i);
         }
         this.timing = timing;
     }
@@ -34,16 +33,14 @@ public class Memory extends Component {
         super(modelName, producer, serialNumber);
         this.memoryAmount = memoryAmount;
         this.timing = timing;
+        overclock(currentTemperature, timing);
         this.currentTemperature = currentTemperature;
     }
 
-    public void setCurrentTemperature(int currentTemperature) {
-        this.currentTemperature = currentTemperature;
-    }
-
-    void checkTemperature(double currentTemperature, int timing) {
-        if (currentTemperature > MAX_SAFE_TEMPERATURE) {
-            throw new IllegalArgumentException("Maksymalna temperatura procesora została przekroczona ");
+    @Override
+    public void overclock(double currentTemperature, int timing) {
+        if (currentTemperature >= MAX_SAFE_TEMPERATURE) {
+            throw new IllegalArgumentException("Maksymalna temperatura została przekroczona ");
         } else {
             this.timing = timing;
         }

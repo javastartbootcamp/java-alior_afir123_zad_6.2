@@ -1,6 +1,6 @@
 package pl.javastart.task;
 
-public class Component {
+abstract class Component {
     String modelName;
     String producer;
     String serialNumber;
